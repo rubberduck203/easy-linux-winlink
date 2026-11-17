@@ -1,0 +1,8 @@
+version: "0.1"
+
+processes:
+  rigctl:
+    command: rigctld -m 3073 -r /dev/ttyUSB0 -s 19200
+
+  ardop:
+    command: ardopcf 8515 plughw:CODEC,0 plughw:CODEC,0 --logdir ~/winlink/logs/ardop

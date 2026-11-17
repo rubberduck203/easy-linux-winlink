@@ -1,0 +1,39 @@
+version: "0.1"
+
+processes:
+  rigctl:
+    availability:
+      restart: on_failure
+    log_output: true
+
+  ardop:
+    availability:
+      restart: on_failure
+    depends_on:
+      rigctl:
+        condition: process_started
+  pat:
+    command: pat http --addr :8081
+    availability:
+      restart: on_failure 
+    depends_on:
+      ardop:
+        condition: process_started
+    readiness_probe:
+      http_get:
+        host: localhost
+        scheme: http
+        path: "/"
+        port: 8081
+      initial_delay_seconds: 3
+      period_seconds: 10
+      timeout_secods: 5
+      success_threshold: 1
+      failure_threshold: 3
+
+  pat-browser:
+    command: open http://localhost:8081
+    depends_on:
+      pat:
+        condition: process_healthy
+
